@@ -6,7 +6,6 @@ provider "google" {
 
 
 module "vpc" {
-  
     source  = "terraform-google-modules/network/google"
     version = "~> 4.0"
 
@@ -45,7 +44,7 @@ module "vpc" {
 resource "google_compute_firewall" "k8s" {
   name = "allow-k8s"
   allow {
-    protocol = "tcp"
+    protocol = "all"
   }
   direction     = "INGRESS"
   network = module.vpc.network_name
@@ -75,6 +74,16 @@ resource "google_compute_firewall" "app" {
   source_ranges           = ["0.0.0.0/0"]
 }
 
+
+resource "google_compute_firewall" "lb" {
+  name    = "allow-k8s-80"
+  network = module.vpc.network_name
+  allow {
+    protocol = "tcp"
+    ports    = ["80"]
+  }
+  source_ranges           = ["0.0.0.0/0"]
+}
 
 
 resource "google_compute_instance" "k8s" {
@@ -112,4 +121,3 @@ output "ec2_ip" {
 output "ec2_ip_out" {
    value = ["${google_compute_instance.k8s["master"].network_interface.0.access_config.0.nat_ip}"]
 }
-
