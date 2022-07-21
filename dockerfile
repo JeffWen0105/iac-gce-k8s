@@ -7,10 +7,10 @@ RUN dnf install -y wget python39-devel terraform git openssh-*
 RUN pip3 install ansible && \
   ssh-keygen -A && \
   ssh-keygen -q  -N  "" -f ~/.ssh/id_rsa && \
-  mkdir -p /root/lab && \
-  git -C /root/lab clone  https://github.com/TGC101/iac-gce-k8s.git &&\
+  mkdir -p /root/lab/iac-gce-k8s && \
   dnf clean all && rm -fr /var/cache 
-WORKDIR /root/lab
-RUN chmod +x /root/lab/iac-gce-k8s
+COPY ./iac-gce-k8s /root/lab/iac-gce-k8s
+WORKDIR /root/lab/iac-gce-k8s
+RUN chmod +x /root/lab/iac-gce-k8s/*.sh
 
 CMD ["tail","-f","/dev/null"]
